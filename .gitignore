@@ -1,0 +1,4 @@
+/go-server/bin
+/go-server/pkg
+/go-server/src/git.apache.org
+/go-server/src/gen-go
