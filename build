@@ -1,8 +1,14 @@
 #!/bin/bash
 
+set -e
 set -x
 
 export GOPATH="$(pwd)/go-server"
 
-go get -v gen-go/guitars/guitars-remote
+go get -v -d gen-go/guitars/guitars-remote
+
+pushd go-server/src/git.apache.org/thrift.git/
+git checkout $(thrift --version | egrep -o '[0-9.]+')
+popd
+
 go install -v gen-go/guitars/guitars-remote

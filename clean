@@ -2,3 +2,4 @@
 
 set -x
 rm -rf go-server/{bin,pkg}
+rm -rf go-server/src/{gen-go,git.apache.org}
