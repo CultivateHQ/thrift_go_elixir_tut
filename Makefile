@@ -52,6 +52,10 @@ clean:
 clobber: clean
 	rm -rf go-server/src/git.apache.org
 
+.PHONY: test
+test:
+	$(GO) test go-service
+
 $(BINS): go-server/src/git.apache.org/thrift.git go-server/src/gen-go
 
 go-server/bin/guitars-remote:
