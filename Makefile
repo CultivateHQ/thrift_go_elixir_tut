@@ -5,6 +5,17 @@ export GOPATH := $(shell pwd)/go-server
 THRIFT ?= $(shell which thrift)
 GO     ?= $(shell which go)
 GIT    ?= $(shell which git)
+
+define ensure_found
+ifeq ($$($(1)),)
+$$(error Could not find the "$(2)" command. Please install it and make sure it is on your system PATH.)
+endif
+endef
+
+$(eval $(call ensure_found,THRIFT,thrift))
+$(eval $(call ensure_found,GO,go))
+$(eval $(call ensure_found,GIT,git))
+
 THRIFT_VERSION := $(shell $(THRIFT) --version | egrep -o '[0-9.]+')
 
 BINS := go-server/bin/go-service \
