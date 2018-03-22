@@ -2,10 +2,7 @@ SHELL := bash
 
 export GOPATH := $(shell pwd)/go-server
 
-THRIFT_SRC := go-server/src/git.apache.org/thrift.git
-GO_GEN_SRC := go-server/src/gen-go
 THRIFT_VERSION := $(shell thrift --version | egrep -o '[0-9.]+')
-BINS := go-server/bin/guitars-remote
 
 .PHONY: all
 all: build
@@ -16,37 +13,28 @@ env:
 	go env
 
 .PHONY: generate
-generate: $(GO_GEN_SRC)
-
-.PHONY: deps
-deps: $(THRIFT_SRC)
-
-.PHONY: build
-build: $(BINS)
-
-.PHONY: clean
-clean:
-	rm -rf go-server/{bin,pkg}
-
-.PHONY: clobber
-clobber: clean
-	rm -rf go-server/src/gen-go
-	rm -rf go-server/src/git.apache.org
-
-go-server/bin/guitars-remote: $(THRIFT_SRC)
-	go install -v gen-go/guitars/guitars-remote
-
-$(GO_GEN_SRC): thrift-defs/*.thrift
+generate:
 	thrift -strict \
 		-recurse \
 		--gen go:package_prefix="gen-go/" \
 		-o "go-server/src" \
 		"thrift-defs/guitars.thrift"
-	find $(@) -name '*.go' | xargs gofmt -w
-	touch $(@)
+	find go-server/src/gen-go -name '*.go' | xargs gofmt -w
 
-
-$(THRIFT_SRC): $(GO_GEN_SRC)
+.PHONY: deps
+deps: generate
 	go get -v -d gen-go/guitars/guitars-remote
-	touch $(@)
-	cd $(@) && git checkout -q $(THRIFT_VERSION)
+	cd go-server/src/git.apache.org/thrift.git && git checkout -q $(THRIFT_VERSION)
+
+.PHONY: build
+build: deps
+	go install -v gen-go/guitars/guitars-remote
+
+.PHONY: clean
+clean:
+	rm -rf go-server/{bin,pkg}
+	rm -rf go-server/src/gen-go
+
+.PHONY: clobber
+clobber: clean
+	rm -rf go-server/src/git.apache.org
