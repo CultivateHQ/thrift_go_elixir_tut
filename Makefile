@@ -2,7 +2,9 @@ SHELL := bash
 
 export GOPATH := $(shell pwd)/go-server
 
-THRIFT_VERSION := $(shell thrift --version | egrep -o '[0-9.]+')
+THRIFT ?= $(shell which thrift)
+GO     ?= $(shell which go)
+THRIFT_VERSION := $(shell $(THRIFT) --version | egrep -o '[0-9.]+')
 
 BINS := go-server/bin/go-service \
         go-server/bin/guitars-remote
@@ -12,9 +14,16 @@ all: build
 
 .PHONY: env
 env:
-	@echo BINS = $(BINS)
+	@echo --------------------
+	@echo THRIFT = $(THRIFT)
 	@echo THRIFT_VERSION = $(THRIFT_VERSION)
-	go env
+	@echo
+	@echo GO = $(GO)
+	@echo GO_VERSION = $(shell $(GO) version)
+	@echo -n "GOPATH = "; $(GO) env GOPATH
+	@echo
+	@echo BINS = $(BINS)
+	@echo --------------------
 
 .PHONY: build
 build: $(BINS)
@@ -31,15 +40,15 @@ clobber: clean
 $(BINS): go-server/src/git.apache.org/thrift.git go-server/src/gen-go
 
 go-server/bin/guitars-remote:
-	go install -v gen-go/guitars/guitars-remote
+	$(GO) install -v gen-go/guitars/guitars-remote
 	@echo OUTPUT: $(@)
 
 go-server/bin/go-service: go-server/src/go-service/*.go
-	go install -v go-service
+	$(GO) install -v go-service
 	@echo OUTPUT: $(@)
 
 go-server/src/gen-go: thrift-defs/*.thrift Makefile
-	thrift -strict \
+	$(THRIFT) -strict \
 		-recurse \
 		--gen go:package_prefix="gen-go/" \
 		-o "go-server/src" \
@@ -48,6 +57,6 @@ go-server/src/gen-go: thrift-defs/*.thrift Makefile
 	touch $(@)
 
 go-server/src/git.apache.org/thrift.git: go-server/src/gen-go
-	go get -v -d gen-go/guitars/guitars-remote
+	$(GO) get -v -d gen-go/guitars/guitars-remote
 	cd go-server/src/git.apache.org/thrift.git && git checkout -q $(THRIFT_VERSION)
 	touch $(@)
