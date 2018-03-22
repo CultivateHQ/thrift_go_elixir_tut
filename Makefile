@@ -32,11 +32,13 @@ $(BINS): go-server/src/git.apache.org/thrift.git go-server/src/gen-go
 
 go-server/bin/guitars-remote:
 	go install -v gen-go/guitars/guitars-remote
+	@echo OUTPUT: $(@)
 
 go-server/bin/go-service: go-server/src/go-service/*.go
 	go install -v go-service
+	@echo OUTPUT: $(@)
 
-go-server/src/gen-go: thrift-defs/*.thrift
+go-server/src/gen-go: thrift-defs/*.thrift Makefile
 	thrift -strict \
 		-recurse \
 		--gen go:package_prefix="gen-go/" \
