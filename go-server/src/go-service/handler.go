@@ -7,13 +7,13 @@ import (
 
 type guitarsHandler struct {
 	idSequence int64
-	storage    []*guitars.Guitar
+	storage    map[int64]*guitars.Guitar
 }
 
 func newGuitarsHandler() *guitarsHandler {
 	return &guitarsHandler{
 		idSequence: 0,
-		storage:    make([]*guitars.Guitar, 0, 10),
+		storage:    make(map[int64]*guitars.Guitar),
 	}
 }
 
@@ -23,7 +23,7 @@ func (p *guitarsHandler) Create(ctx context.Context, brand string, model string)
 	guitar.Brand = brand
 	guitar.Model = model
 
-	p.storage = append(p.storage, guitar)
+	p.storage[guitar.ID] = guitar
 
 	p.idSequence++
 
@@ -31,14 +31,9 @@ func (p *guitarsHandler) Create(ctx context.Context, brand string, model string)
 }
 
 func (p *guitarsHandler) Show(ctx context.Context, id int64) (r *guitars.Guitar, err error) {
-	for _, guitar := range p.storage {
-		if guitar != nil && guitar.GetID() == id {
-			r = guitar
-			break
-		}
-	}
+	r, ok := p.storage[id]
 
-	if r == nil {
+	if !ok {
 		guitarsErr := guitars.NewError()
 		guitarsErr.ErrCode = guitars.ErrorType_NO_SUCH_RECORD_ID
 		err = guitarsErr
@@ -48,17 +43,10 @@ func (p *guitarsHandler) Show(ctx context.Context, id int64) (r *guitars.Guitar,
 }
 
 func (p *guitarsHandler) Remove(ctx context.Context, id int64) (r *guitars.Guitar, err error) {
-	index := -1
-	for i, guitar := range p.storage {
-		if guitar.GetID() == id {
-			r = guitar
-			index = i
-			break
-		}
-	}
+	r, ok := p.storage[id]
 
-	if r != nil {
-		p.storage[index] = nil
+	if ok {
+		delete(p.storage, id)
 	} else {
 		guitarsErr := guitars.NewError()
 		guitarsErr.ErrCode = guitars.ErrorType_NO_SUCH_RECORD_ID
@@ -69,5 +57,11 @@ func (p *guitarsHandler) Remove(ctx context.Context, id int64) (r *guitars.Guita
 }
 
 func (p *guitarsHandler) All(ctx context.Context) (r []*guitars.Guitar, err error) {
-	return p.storage, nil
+	r = make([]*guitars.Guitar, 0, len(p.storage))
+
+	for _, elem := range p.storage {
+		r = append(r, elem)
+	}
+
+	return r, nil
 }
