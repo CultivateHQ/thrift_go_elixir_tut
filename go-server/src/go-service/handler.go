@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"gen-go/guitars"
+	"sync"
 )
 
 type guitarsHandler struct {
+	mutex      sync.RWMutex
 	idSequence int64
 	storage    map[int64]*guitars.Guitar
 }
@@ -18,6 +20,9 @@ func newGuitarsHandler() *guitarsHandler {
 }
 
 func (p *guitarsHandler) Create(ctx context.Context, brand string, model string) (r *guitars.Guitar, err error) {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
 	var guitar = guitars.NewGuitar()
 	guitar.ID = p.idSequence
 	guitar.Brand = brand
@@ -31,6 +36,9 @@ func (p *guitarsHandler) Create(ctx context.Context, brand string, model string)
 }
 
 func (p *guitarsHandler) Show(ctx context.Context, id int64) (r *guitars.Guitar, err error) {
+	p.mutex.RLock()
+	defer p.mutex.RUnlock()
+
 	r, ok := p.storage[id]
 
 	if !ok {
@@ -43,6 +51,9 @@ func (p *guitarsHandler) Show(ctx context.Context, id int64) (r *guitars.Guitar,
 }
 
 func (p *guitarsHandler) Remove(ctx context.Context, id int64) (r *guitars.Guitar, err error) {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
 	r, ok := p.storage[id]
 
 	if ok {
@@ -57,6 +68,9 @@ func (p *guitarsHandler) Remove(ctx context.Context, id int64) (r *guitars.Guita
 }
 
 func (p *guitarsHandler) All(ctx context.Context) (r []*guitars.Guitar, err error) {
+	p.mutex.RLock()
+	defer p.mutex.RUnlock()
+
 	r = make([]*guitars.Guitar, 0, len(p.storage))
 
 	for _, elem := range p.storage {
