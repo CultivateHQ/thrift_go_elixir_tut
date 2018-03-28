@@ -53,7 +53,7 @@ clobber: clean
 	rm -rf go-server/src/git.apache.org
 
 .PHONY: test
-test: go-server/src/gen-go
+test: $(BINS)
 	$(GO) test go-service
 
 $(BINS): go-server/src/git.apache.org/thrift.git go-server/src/gen-go
