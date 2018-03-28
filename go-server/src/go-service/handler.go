@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"gen-go/guitars"
+	"rpc-api/guitars"
 	"sync"
 )
 

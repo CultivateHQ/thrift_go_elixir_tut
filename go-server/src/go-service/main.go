@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"gen-go/guitars"
+	"rpc-api/guitars"
 
 	"git.apache.org/thrift.git/lib/go/thrift"
 )
