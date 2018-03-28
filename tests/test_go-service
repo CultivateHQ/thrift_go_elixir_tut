@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# set -x
+set -e
+
+server_cmd=go-server/bin/go-service
+client_cmd="go-server/bin/guitars-remote -P json -h localhost:9090"
+
+$server_cmd &
+server_pid=${!}
+
+$client_cmd create "Charvel" "San Dimas"
+$client_cmd create "Fender" "Telecaster"
+$client_cmd create "Fender" "Stratocaster"
+$client_cmd create "Fender" "Jaguar"
+$client_cmd create "Gibson" "Les Paul"
+$client_cmd create "Gibson" "SG"
+$client_cmd all
+
+kill $server_pid
