@@ -22,3 +22,5 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 guitars_client-*.tar
 
+# Ignore Thrift generated outputs
+/lib/rpc_api

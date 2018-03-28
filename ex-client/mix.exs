@@ -7,7 +7,12 @@ defmodule GuitarsClient.MixProject do
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      compilers: [:thrift | Mix.compilers],
+      thrift: [
+        files: Path.wildcard("../thrift-defs/**/*.thrift"),
+        output_path: "lib/rpc_api"
+      ]
     ]
   end
 
@@ -21,8 +26,7 @@ defmodule GuitarsClient.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
+      {:thrift, github: "pinterest/elixir-thrift"}
     ]
   end
 end
