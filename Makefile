@@ -48,7 +48,7 @@ env:
 	@echo --------------------
 
 .PHONY: build build-go build-ex
-build: build-go
+build: build-go build-ex
 build-go: $(GO_BINS)
 build-ex: $(EX_BINS)
 
@@ -62,14 +62,14 @@ clean-ex:
 	rm -rf $(EX_BINS) ex-client/lib/thrift
 
 .PHONY: clobber clobber-go clobber-ex
-clobber: clobber-go
+clobber: clobber-go clobber-ex
 clobber-go: clean-go
 	rm -rf go-server/src/git.apache.org
 clobber-ex: clean-ex
 	rm -rf ex-client/{_build,deps}
 
 .PHONY: test test-go test-ex
-test: test-go
+test: test-go test-ex
 test-go: $(GO_BINS)
 	$(GO) test guitars_service
 test-ex: ex-client/deps
