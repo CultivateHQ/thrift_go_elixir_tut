@@ -67,13 +67,13 @@ go-server/bin/guitars_service: go-server/src/guitars_service/*.go
 	@echo OUTPUT: $(@)
 
 go-server/src/thrift_generated: thrift-defs/*.thrift Makefile
-	mkdir -p go-server/src/thrift_generated
+	mkdir -p $(@)
 	$(THRIFT) -strict \
 		-recurse \
 		--gen go:package_prefix="thrift_generated/" \
-		-out "go-server/src/thrift_generated/" \
+		-out "$(@)/" \
 		"thrift-defs/guitars.thrift"
-	find go-server/src/thrift_generated/ -name '*.go' | xargs gofmt -w
+	find $(@)/ -name '*.go' | xargs gofmt -w
 	touch $(@)
 
 go-server/src/git.apache.org/thrift.git: go-server/src/thrift_generated
