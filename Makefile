@@ -112,3 +112,4 @@ ex-client/deps:
 ex-client/guitars_client: ex-client/deps
 	cd ex-client && \
 		$(MIX) escript.build
+	@echo OUTPUT: $(@)
