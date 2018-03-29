@@ -19,6 +19,9 @@ $(eval $(call ensure_found,GIT,git))
 $(eval $(call ensure_found,MIX,mix))
 
 THRIFT_VERSION := $(shell $(THRIFT) --version | egrep -o '[0-9.]+')
+GO_VERSION = $(shell $(GO) version | grep -o '[0-9.]\+.*')
+MIX_VERSION = $(shell $(MIX) --version | grep ^Mix)
+GIT_VERSION = $(shell $(GIT) --version | grep -o '[0-9.]\+')
 
 GO_BINS := go-server/bin/guitars_service \
            go-server/bin/guitars_service-remote
@@ -35,16 +38,17 @@ env:
 	@echo THRIFT_VERSION = $(THRIFT_VERSION)
 	@echo
 	@echo GO = $(GO)
-	@echo GO_VERSION = $(shell $(GO) version)
+	@echo GO_VERSION = $(GO_VERSION)
 	@echo -n "GOPATH = "; $(GO) env GOPATH
 	@echo
 	@echo MIX = $(MIX)
-	@echo MIX_VERSION = "$(shell $(MIX) --version | grep ^Mix)"
+	@echo MIX_VERSION = "$(MIX_VERSION)"
 	@echo
 	@echo GIT = $(GIT)
-	@echo GIT_VERSION = $(shell $(GIT) --version)
+	@echo GIT_VERSION = $(GIT_VERSION)
 	@echo
 	@echo GO_BINS = $(GO_BINS)
+	@echo EX_BINS = $(EX_BINS)
 	@echo --------------------
 
 .PHONY: build build-go build-ex
