@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewGuitarsHandler(t *testing.T) {
-	shouldImplementHandlerInterface := func(handler guitars.Guitars) {}
+	shouldImplementHandlerInterface := func(handler guitars.GuitarsService) {}
 
 	var handler = newGuitarsHandler()
 	shouldImplementHandlerInterface(handler)
