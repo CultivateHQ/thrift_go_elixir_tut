@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"rpc-api/guitars"
 	"testing"
+	"thrift_generated/guitars"
 )
 
 func TestNewGuitarsHandler(t *testing.T) {

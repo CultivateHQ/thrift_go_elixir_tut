@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"rpc-api/guitars"
 	"sync"
+	"thrift_generated/guitars"
 )
 
 type guitarsHandler struct {

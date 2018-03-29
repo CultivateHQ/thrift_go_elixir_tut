@@ -46,7 +46,7 @@ build: $(BINS)
 .PHONY: clean
 clean:
 	rm -rf go-server/{bin,pkg}
-	rm -rf go-server/src/rpc-api
+	rm -rf go-server/src/thrift_generated
 
 .PHONY: clobber
 clobber: clean
@@ -56,27 +56,27 @@ clobber: clean
 test: $(BINS)
 	$(GO) test guitars_service
 
-$(BINS): go-server/src/git.apache.org/thrift.git go-server/src/rpc-api
+$(BINS): go-server/src/git.apache.org/thrift.git go-server/src/thrift_generated
 
 go-server/bin/guitars_service-remote:
-	$(GO) install -v rpc-api/guitars/guitars_service-remote
+	$(GO) install -v thrift_generated/guitars/guitars_service-remote
 	@echo OUTPUT: $(@)
 
 go-server/bin/guitars_service: go-server/src/guitars_service/*.go
 	$(GO) install -v guitars_service
 	@echo OUTPUT: $(@)
 
-go-server/src/rpc-api: thrift-defs/*.thrift Makefile
-	mkdir -p go-server/src/rpc-api
+go-server/src/thrift_generated: thrift-defs/*.thrift Makefile
+	mkdir -p go-server/src/thrift_generated
 	$(THRIFT) -strict \
 		-recurse \
-		--gen go:package_prefix="rpc-api/" \
-		-out "go-server/src/rpc-api" \
+		--gen go:package_prefix="thrift_generated/" \
+		-out "go-server/src/thrift_generated/" \
 		"thrift-defs/guitars.thrift"
-	find go-server/src/rpc-api -name '*.go' | xargs gofmt -w
+	find go-server/src/thrift_generated/ -name '*.go' | xargs gofmt -w
 	touch $(@)
 
-go-server/src/git.apache.org/thrift.git: go-server/src/rpc-api
-	$(GO) get -v -d rpc-api/guitars/guitars_service-remote
+go-server/src/git.apache.org/thrift.git: go-server/src/thrift_generated
+	$(GO) get -v -d thrift_generated/guitars/guitars_service-remote
 	cd go-server/src/git.apache.org/thrift.git && $(GIT) checkout -q $(THRIFT_VERSION)
 	touch $(@)
