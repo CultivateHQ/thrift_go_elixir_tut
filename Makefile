@@ -21,6 +21,8 @@ THRIFT_VERSION := $(shell $(THRIFT) --version | egrep -o '[0-9.]+')
 GO_BINS := go-server/bin/guitars_service \
            go-server/bin/guitars_service-remote
 
+EX_BINS := ex-client/guitars_client
+
 .PHONY: all
 all: build
 
@@ -40,25 +42,34 @@ env:
 	@echo GO_BINS = $(GO_BINS)
 	@echo --------------------
 
-.PHONY: build build-go
+.PHONY: build build-go build-ex
 build: build-go
 build-go: $(GO_BINS)
+build-ex: $(EX_BINS)
 
-.PHONY: clean clean-go
-clean: clean-go
+.PHONY: clean clean-go clean-ex
+clean: clean-go clean-ex
 clean-go:
 	rm -rf go-server/{bin,pkg}
 	rm -rf go-server/src/thrift_generated
+clean-ex:
+	cd ex-client && mix clean
+	rm -rf $(EX_BINS) ex-client/lib/thrift
 
-.PHONY: clobber clobber-go
+.PHONY: clobber clobber-go clobber-ex
 clobber: clobber-go
 clobber-go: clean-go
 	rm -rf go-server/src/git.apache.org
+clobber-ex: clean-ex
+	rm -rf ex-client/{_build,deps}
 
-.PHONY: test test-go
+.PHONY: test test-go test-ex
 test: test-go
 test-go: $(GO_BINS)
 	$(GO) test guitars_service
+test-ex: ex-client/deps
+	cd ex-client && \
+		mix test
 
 $(GO_BINS): go-server/src/git.apache.org/thrift.git go-server/src/thrift_generated
 
@@ -84,3 +95,11 @@ go-server/src/git.apache.org/thrift.git: go-server/src/thrift_generated
 	$(GO) get -v -d thrift_generated/guitars/guitars_service-remote
 	cd go-server/src/git.apache.org/thrift.git && $(GIT) checkout -q $(THRIFT_VERSION)
 	touch $(@)
+
+ex-client/deps:
+	cd ex-client && \
+		mix deps.get
+
+ex-client/guitars_client: ex-client/deps
+	cd ex-client && \
+		mix escript.build
