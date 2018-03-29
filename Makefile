@@ -5,6 +5,7 @@ export GOPATH := $(shell pwd)/go-server
 THRIFT ?= $(shell which thrift)
 GO     ?= $(shell which go)
 GIT    ?= $(shell which git)
+MIX    ?= $(shell which mix)
 
 define ensure_found
 ifeq ($$($(1)),)
@@ -15,6 +16,7 @@ endef
 $(eval $(call ensure_found,THRIFT,thrift))
 $(eval $(call ensure_found,GO,go))
 $(eval $(call ensure_found,GIT,git))
+$(eval $(call ensure_found,MIX,mix))
 
 THRIFT_VERSION := $(shell $(THRIFT) --version | egrep -o '[0-9.]+')
 
@@ -36,6 +38,9 @@ env:
 	@echo GO_VERSION = $(shell $(GO) version)
 	@echo -n "GOPATH = "; $(GO) env GOPATH
 	@echo
+	@echo MIX = $(MIX)
+	@echo MIX_VERSION = "$(shell $(MIX) --version | grep ^Mix)"
+	@echo
 	@echo GIT = $(GIT)
 	@echo GIT_VERSION = $(shell $(GIT) --version)
 	@echo
@@ -53,7 +58,7 @@ clean-go:
 	rm -rf go-server/{bin,pkg}
 	rm -rf go-server/src/thrift_generated
 clean-ex:
-	cd ex-client && mix clean
+	cd ex-client && $(MIX) clean
 	rm -rf $(EX_BINS) ex-client/lib/thrift
 
 .PHONY: clobber clobber-go clobber-ex
@@ -69,7 +74,7 @@ test-go: $(GO_BINS)
 	$(GO) test guitars_service
 test-ex: ex-client/deps
 	cd ex-client && \
-		mix test
+		$(MIX) test
 
 $(GO_BINS): go-server/src/git.apache.org/thrift.git go-server/src/thrift_generated
 
@@ -98,8 +103,8 @@ go-server/src/git.apache.org/thrift.git: go-server/src/thrift_generated
 
 ex-client/deps:
 	cd ex-client && \
-		mix deps.get
+		$(MIX) deps.get
 
 ex-client/guitars_client: ex-client/deps
 	cd ex-client && \
-		mix escript.build
+		$(MIX) escript.build
