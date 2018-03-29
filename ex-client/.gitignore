@@ -24,3 +24,6 @@ guitars_client-*.tar
 
 # Ignore Thrift generated outputs
 /lib/thrift
+
+# Ignore the escript binary
+/guitars_client

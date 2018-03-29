@@ -12,7 +12,8 @@ defmodule GuitarsClient.MixProject do
       thrift: [
         files: Path.wildcard("../thrift-defs/**/*.thrift"),
         output_path: "lib/"
-      ]
+      ],
+      escript: [main_module: GuitarsClient],
     ]
   end
 
