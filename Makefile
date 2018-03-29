@@ -18,8 +18,8 @@ $(eval $(call ensure_found,GIT,git))
 
 THRIFT_VERSION := $(shell $(THRIFT) --version | egrep -o '[0-9.]+')
 
-BINS := go-server/bin/guitars_service \
-        go-server/bin/guitars_service-remote
+GO_BINS := go-server/bin/guitars_service \
+           go-server/bin/guitars_service-remote
 
 .PHONY: all
 all: build
@@ -37,26 +37,30 @@ env:
 	@echo GIT = $(GIT)
 	@echo GIT_VERSION = $(shell $(GIT) --version)
 	@echo
-	@echo BINS = $(BINS)
+	@echo GO_BINS = $(GO_BINS)
 	@echo --------------------
 
-.PHONY: build
-build: $(BINS)
+.PHONY: build build-go
+build: build-go
+build-go: $(GO_BINS)
 
-.PHONY: clean
-clean:
+.PHONY: clean clean-go
+clean: clean-go
+clean-go:
 	rm -rf go-server/{bin,pkg}
 	rm -rf go-server/src/thrift_generated
 
-.PHONY: clobber
-clobber: clean
+.PHONY: clobber clobber-go
+clobber: clobber-go
+clobber-go: clean-go
 	rm -rf go-server/src/git.apache.org
 
-.PHONY: test
-test: $(BINS)
+.PHONY: test test-go
+test: test-go
+test-go: $(GO_BINS)
 	$(GO) test guitars_service
 
-$(BINS): go-server/src/git.apache.org/thrift.git go-server/src/thrift_generated
+$(GO_BINS): go-server/src/git.apache.org/thrift.git go-server/src/thrift_generated
 
 go-server/bin/guitars_service-remote:
 	$(GO) install -v thrift_generated/guitars/guitars_service-remote
