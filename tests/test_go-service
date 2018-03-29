@@ -9,6 +9,14 @@ client_cmd="go-server/bin/guitars-remote -P json -h localhost:9090"
 $server_cmd &
 server_pid=${!}
 
+function on_exit {
+  echo "Stopping the service"
+  kill $server_pid
+}
+trap on_exit EXIT
+
+sleep 1
+
 $client_cmd create "Charvel" "San Dimas"
 $client_cmd create "Fender" "Telecaster"
 $client_cmd create "Fender" "Stratocaster"
@@ -16,5 +24,3 @@ $client_cmd create "Fender" "Jaguar"
 $client_cmd create "Gibson" "Les Paul"
 $client_cmd create "Gibson" "SG"
 $client_cmd all
-
-kill $server_pid
