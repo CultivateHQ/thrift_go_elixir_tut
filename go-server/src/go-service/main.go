@@ -19,7 +19,7 @@ func main() {
 		transportFactory := thrift.NewTFramedTransportFactory(thrift.NewTTransportFactory())
 		protocolFactory := thrift.NewTBinaryProtocolFactoryDefault()
 		handler := newGuitarsHandler()
-		processor := guitars.NewGuitarsProcessor(handler)
+		processor := guitars.NewGuitarsServiceProcessor(handler)
 		server := thrift.NewTSimpleServer4(processor, serverTransport, transportFactory, protocolFactory)
 
 		fmt.Println("Starting the simple server ... on ", addr)

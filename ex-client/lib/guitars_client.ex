@@ -2,7 +2,7 @@ defmodule GuitarsClient do
   @moduledoc """
   A command-line client for the Thrift based Guitars API.
   """
-  alias Thrift.Generated.Guitars.Binary.Framed.Client
+  alias Thrift.Generated.GuitarsService.Binary.Framed.Client
 
   @doc """
   The entry point for the client.

@@ -15,7 +15,7 @@ exception Error {
   1: ErrorType err_code
 }
 
-service Guitars {
+service GuitarsService {
   Guitar create(1:string brand, 2:string model),
   Guitar show(1:i64 id) throws (1: Error error),
   Guitar remove(1:i64 id) throws (1: Error error),

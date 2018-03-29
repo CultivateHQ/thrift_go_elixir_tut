@@ -4,13 +4,13 @@
 set -e
 
 server_cmd=go-server/bin/go-service
-client_cmd="go-server/bin/guitars-remote -P binary -framed -h localhost:9090"
+client_cmd="go-server/bin/guitars_service-remote -P binary -framed -h localhost:9090"
 
 $server_cmd &
 server_pid=${!}
 
 function on_exit {
-  echo "Stopping the service"
+  echo "Stopping the service (PID: $server_pid)"
   kill $server_pid
 }
 trap on_exit EXIT
