@@ -18,7 +18,7 @@ $(eval $(call ensure_found,GIT,git))
 
 THRIFT_VERSION := $(shell $(THRIFT) --version | egrep -o '[0-9.]+')
 
-BINS := go-server/bin/go-service \
+BINS := go-server/bin/guitars_service \
         go-server/bin/guitars_service-remote
 
 .PHONY: all
@@ -54,7 +54,7 @@ clobber: clean
 
 .PHONY: test
 test: $(BINS)
-	$(GO) test go-service
+	$(GO) test guitars_service
 
 $(BINS): go-server/src/git.apache.org/thrift.git go-server/src/rpc-api
 
@@ -62,8 +62,8 @@ go-server/bin/guitars_service-remote:
 	$(GO) install -v rpc-api/guitars/guitars_service-remote
 	@echo OUTPUT: $(@)
 
-go-server/bin/go-service: go-server/src/go-service/*.go
-	$(GO) install -v go-service
+go-server/bin/guitars_service: go-server/src/guitars_service/*.go
+	$(GO) install -v guitars_service
 	@echo OUTPUT: $(@)
 
 go-server/src/rpc-api: thrift-defs/*.thrift Makefile
