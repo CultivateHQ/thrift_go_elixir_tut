@@ -16,8 +16,8 @@ func main() {
 	serverTransport, err := thrift.NewTServerSocket(addr)
 
 	if err == nil {
-		transportFactory := thrift.NewTTransportFactory()
-		protocolFactory := thrift.NewTJSONProtocolFactory()
+		transportFactory := thrift.NewTFramedTransportFactory(thrift.NewTTransportFactory())
+		protocolFactory := thrift.NewTBinaryProtocolFactoryDefault()
 		handler := newGuitarsHandler()
 		processor := guitars.NewGuitarsProcessor(handler)
 		server := thrift.NewTSimpleServer4(processor, serverTransport, transportFactory, protocolFactory)
