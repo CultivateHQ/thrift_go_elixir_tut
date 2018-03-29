@@ -11,7 +11,7 @@ defmodule GuitarsClient.MixProject do
       compilers: [:thrift | Mix.compilers],
       thrift: [
         files: Path.wildcard("../thrift-defs/**/*.thrift"),
-        output_path: "lib/rpc_api"
+        output_path: "lib/"
       ]
     ]
   end

@@ -23,4 +23,4 @@ erl_crash.dump
 guitars_client-*.tar
 
 # Ignore Thrift generated outputs
-/lib/rpc_api
+/lib/thrift

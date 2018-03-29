@@ -1,4 +1,5 @@
 namespace * guitars
+namespace elixir Thrift.Generated
 
 struct Guitar {
   1: i64 id,
