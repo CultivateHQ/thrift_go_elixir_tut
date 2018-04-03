@@ -1,5 +1,5 @@
 defmodule DbTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   setup do
     _ = start_supervised!(Db)
