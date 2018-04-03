@@ -1,55 +1,42 @@
 defmodule Db do
-  use GenServer
+  use Agent
 
   @name __MODULE__
 
   def start_link(_opts) do
-    GenServer.start_link(__MODULE__, :no_args, [name: @name])
+    records = %{}
+    next_id = 0
+    init_fun = fn -> {records, next_id} end
+    Agent.start_link(init_fun, name: @name)
   end
 
   def create(record) do
-    GenServer.call(@name, {:create, record})
+    Agent.update(@name, fn {records, next_id} ->
+      records = Map.put(records, next_id, record)
+      {records, next_id + 1}
+    end)
   end
 
   def find(id) do
-    GenServer.call(@name, {:find, id})
+    Agent.get(@name, fn {records, _} ->
+      Map.get(records, id, :not_found)
+    end)
   end
 
   def all do
-    GenServer.call(@name, :all)
+    Agent.get(@name, fn {records, _} ->
+      Map.values(records)
+    end)
   end
 
   def remove(id) do
-    GenServer.call(@name, {:remove, id})
+    Agent.get_and_update(@name, fn {records, next_id} ->
+      {record, records} = Map.pop(records, id, :not_found)
+      {record, {records, next_id}}
+    end)
   end
 
   def stop do
-    GenServer.stop(@name)
-  end
-
-  # Callbacks
-
-  def init(_opts) do
-    records = %{}
-    next_id = 0
-    {:ok, {records, next_id}}
-  end
-
-  def handle_call({:create, record}, _from, {records, next_id}) do
-    records = Map.put(records, next_id, record)
-    {:reply, :ok, {records, next_id + 1}}
-  end
-
-  def handle_call(:all, _from, state = {records, _}) do
-    {:reply, Map.values(records), state}
-  end
-
-  def handle_call({:find, id}, _from, state = {records, _}) do
-    {:reply, Map.get(records, id, :not_found), state}
-  end
-
-  def handle_call({:remove, id}, _from, {records, next_id}) do
-    {record, records} = Map.pop(records, id, :not_found)
-    {:reply, record, {records, next_id}}
+    Agent.stop(@name)
   end
 end
